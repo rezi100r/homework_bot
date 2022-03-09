@@ -149,7 +149,6 @@ def main():
     while True:
         try:
             response = get_api_answer(current_timestamp)
-            print(response)
             if type(response) != dict:
                 raise TypeError(response)
             homeworks = check_response(response)
