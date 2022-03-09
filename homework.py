@@ -43,7 +43,6 @@ logging.basicConfig(
 
 def send_message(bot: telegram.Bot, message: str) -> None:
     """отправляет сообщение в Telegram чат"""
-
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.info(f'Бот отправил сообщение {message}')
@@ -53,7 +52,6 @@ def send_message(bot: telegram.Bot, message: str) -> None:
 
 def get_api_answer(current_timestamp: int) -> Union[dict, str]:
     """создает и отправляет запрос к эндпоинту"""
-
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     response = requests.get(ENDPOINT, headers=HEADERS, params=params)
@@ -69,7 +67,6 @@ def get_api_answer(current_timestamp: int) -> Union[dict, str]:
 
 def check_response(response: dict) -> list:
     """Проверка полученного ответа от эндпоинта"""
-
     if type(response) != dict:
         message = 'имеет некорректный тип.'
         logging.error(message)
@@ -95,7 +92,6 @@ def check_response(response: dict) -> list:
 
 def parse_status(homework: dict) -> Union[str, None]:
     """Извлекает из информации о домашней работе статус этой работы"""
-
     if not homework.get('homework_name'):
         homework_name = 'NoNaMe'
         logging.warning('Отсутствует имя домашней работы.')
@@ -126,7 +122,6 @@ def parse_status(homework: dict) -> Union[str, None]:
 
 def check_tokens() -> bool:
     """проверяет доступность переменных окружения необходимых для работы"""
-
     list_env = [
         PRACTICUM_TOKEN,
         TELEGRAM_TOKEN,
@@ -144,13 +139,11 @@ def check_tokens() -> bool:
 
 def main():
     """Основная логика работы бота."""
-
     if not check_tokens():
         exit()
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    #current_timestamp = int(time.time())
-    current_timestamp = 1645007022
+    current_timestamp = int(time.time())
 
     while True:
         try:
