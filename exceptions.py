@@ -21,3 +21,11 @@ class CheckResponseError(Exception):
             f'Проверка ответа API: {text}'
         )
         super().__init__(message)
+
+
+class LenResponseError(Exception):
+    def __init__(self):
+        message = (
+            f'Ответ API пуст.'
+        )
+        super().__init__(message)

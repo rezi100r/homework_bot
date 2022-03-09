@@ -10,6 +10,7 @@ from http import HTTPStatus
 from typing import Union
 
 from exceptions import HTTPRequestError, CheckResponseError, ParseStatusError
+from exceptions import LenResponseError
 
 load_dotenv()
 
@@ -144,30 +145,32 @@ def main():
         exit()
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time())
-
+    # current_timestamp = int(time.time())
+    current_timestamp = 1645010057
     while True:
         try:
             response = get_api_answer(current_timestamp)
+            print(response)
             if type(response) != dict:
                 raise TypeError(response)
             homeworks = check_response(response)
-            if len(homeworks) > 0:
-                for homework in homeworks:
-                    message = parse_status(homework)
-                    if message is not None:
-                        send_message(bot, message)
-            else:
-                logging.debug('API ответ пуст')
+            if len(homeworks) == 0:
+                raise LenResponseError
+            for homework in homeworks:
+                message = parse_status(homework)
+                if message is not None:
+                    send_message(bot, message)
+            current_timestamp = response.get('current_date')
             time.sleep(RETRY_TIME)
-        except Exception as error:
+        except TypeError as error:
             message = f'Сбой в работе программы: {error}'
             if MESSAGES['error'] != message:
                 send_message(bot, message)
             MESSAGES['error'] = message
             time.sleep(RETRY_TIME)
-        else:
-            current_timestamp = response.get('current_date')
+        except LenResponseError as error:
+            logging.debug(error)
+            time.sleep(RETRY_TIME)
 
 
 if __name__ == '__main__':
