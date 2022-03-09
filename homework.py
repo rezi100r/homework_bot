@@ -145,8 +145,7 @@ def main():
         exit()
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    # current_timestamp = int(time.time())
-    current_timestamp = 1645010057
+    current_timestamp = int(time.time())
     while True:
         try:
             response = get_api_answer(current_timestamp)
