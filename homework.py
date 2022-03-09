@@ -7,7 +7,7 @@ import requests
 import telegram
 from dotenv import load_dotenv
 from http import HTTPStatus
-from typing import Union, Any
+from typing import Union
 
 from exceptions import HTTPRequestError, CheckResponseError, ParseStatusError
 from exceptions import LenResponseError
@@ -112,7 +112,7 @@ def check_tokens() -> bool:
     ]
     if not all(list_env):
         logging.critical(
-            f'Отсутствует обязательная переменная окружения.\n'
+            'Отсутствует обязательная переменная окружения.\n'
             'Программа принудительно остановлена.'
         )
         return False
