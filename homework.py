@@ -117,6 +117,7 @@ def parse_status(homework: dict) -> Union[str, None]:
                 f'{verdict}'
             )
         else:
+            logging.debug('Статус не изменился.')
             return None
 
 
@@ -148,13 +149,17 @@ def main():
     while True:
         try:
             response = get_api_answer(current_timestamp)
+            print(response)
             if type(response) != dict:
                 raise TypeError(response)
             homeworks = check_response(response)
-            for homework in homeworks:
-                message = parse_status(homework)
-                if message is not None:
-                    send_message(bot, message)
+            if len(homeworks) > 0:
+                for homework in homeworks:
+                    message = parse_status(homework)
+                    if message is not None:
+                        send_message(bot, message)
+            else:
+                logging.debug('API ответ пуст')
             time.sleep(RETRY_TIME)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
