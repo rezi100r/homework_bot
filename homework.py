@@ -29,8 +29,6 @@ HOMEWORK_STATUSES = {
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
 
-LAST_SEND = None
-
 
 def send_message(bot: telegram.Bot, message: str) -> None:
     """отправляет сообщение в Telegram чат."""
@@ -106,14 +104,14 @@ def check_tokens() -> bool:
         TELEGRAM_TOKEN,
         TELEGRAM_CHAT_ID
     ]
-    if not all(list_env):
-        return False
-    return True
+    return all(list_env)
 
 
 def main():
     """Основная логика работы бота."""
-    global LAST_SEND
+    last_send = {
+        'error': None,
+    }
     if not check_tokens():
         logging.critical(
             'Отсутствует обязательная переменная окружения.\n'
@@ -133,15 +131,17 @@ def main():
                 break
             for homework in homeworks:
                 message = parse_status(homework)
-                if LAST_SEND != message:
+                if last_send.get(homework['homework_name']) != message:
                     send_message(bot, message)
-                    LAST_SEND = message
+                    last_send[homework['homework_name']] = message
             current_timestamp = response.get('current_date')
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
-            if LAST_SEND != message:
+            if last_send['error'] != message:
                 send_message(bot, message)
-                LAST_SEND = message
+                last_send['error'] = message
+        else:
+            last_send['error'] = None
         finally:
             time.sleep(RETRY_TIME)
 
